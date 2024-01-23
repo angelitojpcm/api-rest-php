@@ -1,0 +1,15 @@
+{
+    "name": "angel_mantilla/api-rest",
+    "autoload": {
+        "psr-4": {
+            "AngelMantilla\\ApiRest\\": "app/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Angel Calderon Mantilla",
+            "email": "angelitojpcmantilla24@gmail.com"
+        }
+    ],
+    "require": {}
+}

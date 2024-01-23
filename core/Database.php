@@ -1,4 +1,9 @@
 <?php
+namespace Core;
+
+use PDO;
+use PDOException;
+
 class Database {
     private $host = 'localhost';
     private $db_name = 'test_db';
