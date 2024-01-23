@@ -1,15 +1,26 @@
 <?php
+
 namespace Core;
 
-class App extends Http{
+class App
+{
     protected $controller;
     protected $method;
     protected $params;
     protected $request;
-    public function __construct() {
-        $url = $this->parseUrl();
+    protected $http;
+    public function __construct()
+    {
+        $this->http = new http;
+        if ($this->http->isLocal()) {
+            $baseUrl = 'http://localhost/facturacion/api-rest/';
+        } else {
+            $baseUrl = 'http://tudominio.com/';
+        }
+
+        $url = $this->parseUrl($baseUrl);
         $routes = require 'routes/web.php';
-        if($url !== null) {
+        if ($url !== null) {
             foreach ($routes as $route => $data) {
                 if (isset($data['prefix'])) {
                     $prefix = ltrim($data['prefix'], '/');
@@ -33,12 +44,14 @@ class App extends Http{
             die('No se encontró la ruta solicitada.');
         }
     }
-    public function parseUrl() {
-        if(isset($_GET['url'])) {
+    public function parseUrl()
+    {
+        if (isset($_GET['url'])) {
             return explode('/', filter_var(rtrim($_GET['url'], '/'), FILTER_SANITIZE_URL));
         }
     }
-    public function handleMiddlewares($middlewares) {
+    public function handleMiddlewares($middlewares)
+    {
         foreach ($middlewares as $middleware) {
             $middlewareInstance = new $middleware;
             $middlewareInstance->handle($this->request, function ($request) {
@@ -46,13 +59,15 @@ class App extends Http{
             });
         }
     }
-    public function handleRoute($data) {
+    public function handleRoute($data)
+    {
         $this->controller = $data['controller'][0];
         $this->method = $data['controller'][1];
         $middlewares = $data['middleware'];
         $this->handleMiddlewares($middlewares);
     }
-    public function handleGroup($group, $url) {
+    public function handleGroup($group, $url)
+    {
         $this->handleMiddlewares($group['middleware']);
         if (isset($group['routes'][$url])) {
             $this->handleRoute($group['routes'][$url]);
